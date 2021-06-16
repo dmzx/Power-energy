@@ -285,8 +285,8 @@ class main_controller
 		$this->functions->assign_authors();
 
 		$this->template->assign_vars([
-			'POWERENERGY_FOOTER_VIEW'	=> true,
-			'POWERENERGY_VERSION'		=> $this->config['dmzx_powerenergy_version'],
+			'POWERENERGY_FOOTER_VIEW'		=> true,
+			'DMZX_POWERENERGY_VERSION '		=> $this->config['dmzx_powerenergy_version'],
 		]);
 
 		return $this->helper->render('@dmzx_powerenergy/powerenergy_body.html');
