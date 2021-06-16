@@ -1,6 +1,6 @@
 # Power energy Extension
 
-[![Build Status](https://travis-ci.com/dmzx/Power-energy.svg?branch=master)](https://travis-ci.com/dmzx/Power-energy)
+[![Build Status](https://travis-ci.com/dmzx/Power-energy.svg?branch=main)](https://travis-ci.com/dmzx/Power-energy)
 
 ## Install
 1. Download the latest release.
