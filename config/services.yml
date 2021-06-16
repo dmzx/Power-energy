@@ -1,0 +1,26 @@
+services:
+    dmzx.powerenergy.controller.main:
+        class: dmzx\powerenergy\controller\main_controller
+        arguments:
+            - '@config'
+            - '@controller.helper'
+            - '@template'
+            - '@language'
+            - '@auth'
+            - '@dmzx.powerenergy.functions'
+    dmzx.powerenergy.listener:
+        class: dmzx\powerenergy\event\main_listener
+        arguments:
+            - '@language'
+            - '@controller.helper'
+            - '@template'
+            - '@auth'
+            - '%core.php_ext%'
+        tags:
+            - { name: event.listener }
+    dmzx.powerenergy.functions:
+        class: 'dmzx\powerenergy\core\functions'
+        arguments:
+            - '@template'
+            - '@ext.manager'
+            - '@config'

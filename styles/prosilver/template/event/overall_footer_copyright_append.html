@@ -1,0 +1,3 @@
+{% if POWERENERGY_FOOTER_VIEW and S_USER_LOGGED_IN %}
+	<div><i class="fa fa-bolt" aria-hidden="true"></i> {{ POWERENERGY_DISPLAY_NAME }} <span title="{{ lang('DMZX_POWERENERGY_VERSION') ~ lang('COLON') }} {{ DMZX_POWERENERGY_VERSION }}">&copy;</span> {{ lang('POST_BY_AUTHOR') }} {{ POWERENERGY_AUTHOR_HOMEPAGES }}</div>
+{% endif %}

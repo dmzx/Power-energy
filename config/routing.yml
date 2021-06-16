@@ -1,0 +1,3 @@
+dmzx_powerenergy_controller:
+    path: '/powerenergy'
+    defaults: { _controller: 'dmzx.powerenergy.controller.main:handle' }
