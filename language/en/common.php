@@ -37,4 +37,10 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, [
 	'POWERENERGY_PAGE'					=> 'Power energy',
 	'VIEWING_DMZX_POWERENERGY'			=> 'Viewing Power energy page',
+	'H_POWERENERGY_VIEW'				=> 'Hourly statistics',
+	'D_POWERENERGY_VIEW'				=> 'Daily statistics',
+	'M_POWERENERGY_VIEW'				=> 'Monthly statistics',
+	'POWERENERGY_HOURS'					=> 'Hours',
+	'POWERENERGY_DAYS'					=> 'Days',
+	'POWERENERGY_MONTHS'				=> 'Months',
 ]);

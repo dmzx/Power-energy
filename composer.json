@@ -3,8 +3,8 @@
 	"type": "phpbb-extension",
 	"description": "Power energy page based on Smart read out.",
 	"homepage": "https://www.dmzx-web.net/",
-	"version": "1.0.0",
-	"time": "2021-05-11",
+	"version": "1.0.1",
+	"time": "2021-07-12",
 	"keywords": [
 		"phpbb",
 		"extension",

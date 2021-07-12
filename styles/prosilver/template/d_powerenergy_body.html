@@ -1,0 +1,223 @@
+{% if POWERENERGY_ALLOW_USE %}
+{% include 'overall_header.html' %}
+
+{% INCLUDECSS '@dmzx_powerenergy/powerenergy.css' %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+
+<div id="tabs" class="tabs">
+	<ul>
+		<li class="tab" id="tab_h"><a href="#" onclick="window.open('{U_H_MODE}', '_self'); return false;"><div style="border: none;">{{ lang('POWERENERGY_HOURS') }}</div></a></li>
+		<li class="tab activetab" id="tab_d"><a href="#" onclick="window.open('{U_D_MODE}', '_self'); return false;"><div style="border: none;">{{ lang('POWERENERGY_DAYS') }}</div></a></li>
+		<li class="tab" id="tab_m"><a href="#" onclick="window.open('{U_M_MODE}', '_self'); return false;"><div style="border: none;">{{ lang('POWERENERGY_MONTHS') }}</div></a></li>
+	</ul>
+</div>
+<div class="panel bg1">
+	<div class="container">
+		<canvas id="Days_Chart"></canvas>
+	</div>
+</div>
+
+<script>
+	var powerenergydays = {
+
+		{% for powerenergy_days in loops.powerenergy_days %}
+			// DAYS
+			// Power returned
+			Kw: {{ powerenergy_days.POWERENERGY_DAY_PWR }},
+			Kw1: {{ powerenergy_days.POWERENERGY_DAY1_PWR }},
+			Kw2: {{ powerenergy_days.POWERENERGY_DAY2_PWR }},
+			Kw3: {{ powerenergy_days.POWERENERGY_DAY3_PWR }},
+			Kw4: {{ powerenergy_days.POWERENERGY_DAY4_PWR }},
+			Kw5: {{ powerenergy_days.POWERENERGY_DAY5_PWR }},
+			Kw6: {{ powerenergy_days.POWERENERGY_DAY6_PWR }},
+			Kw7: {{ powerenergy_days.POWERENERGY_DAY7_PWR }},
+			Kw8: {{ powerenergy_days.POWERENERGY_DAY8_PWR }},
+			Kw9: {{ powerenergy_days.POWERENERGY_DAY9_PWR }},
+			Kw10: {{ powerenergy_days.POWERENERGY_DAY10_PWR }},
+			Kw11: {{ powerenergy_days.POWERENERGY_DAY11_PWR }},
+			Kw12: {{ powerenergy_days.POWERENERGY_DAY12_PWR }},
+			Kw13: {{ powerenergy_days.POWERENERGY_DAY13_PWR }},
+			// Power Used
+			Kw_pwu: {{ powerenergy_days.POWERENERGY_DAY_PWU }},
+			Kw1_pwu: {{ powerenergy_days.POWERENERGY_DAY1_PWU }},
+			Kw2_pwu: {{ powerenergy_days.POWERENERGY_DAY2_PWU }},
+			Kw3_pwu: {{ powerenergy_days.POWERENERGY_DAY3_PWU }},
+			Kw4_pwu: {{ powerenergy_days.POWERENERGY_DAY4_PWU }},
+			Kw5_pwu: {{ powerenergy_days.POWERENERGY_DAY5_PWU }},
+			Kw6_pwu: {{ powerenergy_days.POWERENERGY_DAY6_PWU }},
+			Kw7_pwu: {{ powerenergy_days.POWERENERGY_DAY7_PWU }},
+			Kw8_pwu: {{ powerenergy_days.POWERENERGY_DAY8_PWU }},
+			Kw9_pwu: {{ powerenergy_days.POWERENERGY_DAY9_PWU }},
+			Kw10_pwu: {{ powerenergy_days.POWERENERGY_DAY10_PWU }},
+			Kw11_pwu: {{ powerenergy_days.POWERENERGY_DAY11_PWU }},
+			Kw12_pwu: {{ powerenergy_days.POWERENERGY_DAY12_PWU }},
+			Kw13_pwu: {{ powerenergy_days.POWERENERGY_DAY13_PWU }},
+			// Date of days
+			Kw_date: {{ powerenergy_days.POWERENERGY_DAY_DATE }},
+			Kw1_date: {{ powerenergy_days.POWERENERGY_DAY1_DATE }},
+			Kw2_date: {{ powerenergy_days.POWERENERGY_DAY2_DATE }},
+			Kw3_date: {{ powerenergy_days.POWERENERGY_DAY3_DATE }},
+			Kw4_date: {{ powerenergy_days.POWERENERGY_DAY4_DATE }},
+			Kw5_date: {{ powerenergy_days.POWERENERGY_DAY5_DATE }},
+			Kw6_date: {{ powerenergy_days.POWERENERGY_DAY6_DATE }},
+			Kw7_date: {{ powerenergy_days.POWERENERGY_DAY7_DATE }},
+			Kw8_date: {{ powerenergy_days.POWERENERGY_DAY8_DATE }},
+			Kw9_date: {{ powerenergy_days.POWERENERGY_DAY9_DATE }},
+			Kw10_date: {{ powerenergy_days.POWERENERGY_DAY10_DATE }},
+			Kw11_date: {{ powerenergy_days.POWERENERGY_DAY11_DATE }},
+			Kw12_date: {{ powerenergy_days.POWERENERGY_DAY12_DATE }},
+			Kw13_date: {{ powerenergy_days.POWERENERGY_DAY13_DATE }},
+			// End Days
+		{% endfor %}
+	}
+
+	function formatDate(type, dateIn)
+	{
+		let dateOut = "";
+
+		if (type == "Hours")
+		{
+			dateOut = " "+dateIn.substring(4,6)+"-"+dateIn.substring(2,4)+"	"+dateIn.substring(6,8)+":00";
+		}
+		else if (type == "Days")
+			dateOut = recidToWeekday(dateIn)+" "+dateIn.substring(4,6)+"-"+dateIn.substring(2,4)+"-20"+dateIn.substring(0,2);
+		else if (type == "Months")
+			dateOut = "20"+dateIn.substring(0,2)+"-"+dateIn.substring(2,4);
+		else
+			dateOut = "20"+dateIn.substring(0,2)+"-"+dateIn.substring(2,4)+"-"+dateIn.substring(4,6)+":"+dateIn.substring(6,8);
+		return dateOut;
+	}
+
+	function recidToWeekday(dateIn)
+	{
+		var YY = "20"+dateIn.substring(0,2);
+
+		//-------------------YY-------------------(MM-1)----------------------DD---------------------HH--MM--SS
+		var dt = new Date(Date.UTC(YY, (dateIn.substring(2,4)-1), dateIn.substring(4,6), 1, 1, 1));
+
+		return dt.toLocaleDateString('nl-NL', {weekday: 'long'});
+
+	}
+</script>
+
+<script>
+	let myChart = document.getElementById("Days_Chart").getContext('2d');
+	var type = "Days";
+
+	var barChartData = {
+		labels: [
+			formatDate(type, powerenergydays.Kw_date.toString()),
+			formatDate(type, powerenergydays.Kw1_date.toString()),
+			formatDate(type, powerenergydays.Kw2_date.toString()),
+			formatDate(type, powerenergydays.Kw3_date.toString()),
+			formatDate(type, powerenergydays.Kw4_date.toString()),
+			formatDate(type, powerenergydays.Kw5_date.toString()),
+			formatDate(type, powerenergydays.Kw6_date.toString()),
+			formatDate(type, powerenergydays.Kw7_date.toString()),
+			formatDate(type, powerenergydays.Kw8_date.toString()),
+			formatDate(type, powerenergydays.Kw9_date.toString()),
+			formatDate(type, powerenergydays.Kw10_date.toString()),
+			formatDate(type, powerenergydays.Kw11_date.toString()),
+			formatDate(type, powerenergydays.Kw12_date.toString()),
+			formatDate(type, powerenergydays.Kw13_date.toString()),
+		],
+		datasets: [{
+			label: 'Watt used',
+			backgroundColor: 'rgba(255, 99, 132, 0.3)',
+			borderColor: 'rgb(255, 99, 132)',
+			borderWidth: 1,
+			data: [
+				powerenergydays.Kw_pwu,
+				powerenergydays.Kw1_pwu,
+				powerenergydays.Kw2_pwu,
+				powerenergydays.Kw3_pwu,
+				powerenergydays.Kw4_pwu,
+				powerenergydays.Kw5_pwu,
+				powerenergydays.Kw6_pwu,
+				powerenergydays.Kw7_pwu,
+				powerenergydays.Kw8_pwu,
+				powerenergydays.Kw9_pwu,
+				powerenergydays.Kw10_pwu,
+				powerenergydays.Kw11_pwu,
+				powerenergydays.Kw12_pwu,
+				powerenergydays.Kw13_pwu
+			]
+		},
+		{
+			label: 'Watt return',
+			backgroundColor: 'rgba(75, 192, 192, 0.3)',
+			borderColor: 'rgb(75, 192, 192)',
+			borderWidth: 1,
+			data: [
+				- powerenergydays.Kw,
+				- powerenergydays.Kw1,
+				- powerenergydays.Kw2,
+				- powerenergydays.Kw3,
+				- powerenergydays.Kw4,
+				- powerenergydays.Kw5,
+				- powerenergydays.Kw6,
+				- powerenergydays.Kw7,
+				- powerenergydays.Kw8,
+				- powerenergydays.Kw9,
+				- powerenergydays.Kw10,
+				- powerenergydays.Kw11,
+				- powerenergydays.Kw12,
+				- powerenergydays.Kw13
+			]
+		}]
+	};
+
+	Chart.defaults.global.defaultFontFamily =	'verdana';
+	Chart.defaults.global.defaultFontSize =	12;
+	Chart.defaults.global.defaultFontColor =	'#777';
+
+	let populationChart_days = new Chart(myChart, {
+		type: 'bar',
+		data: barChartData,
+		options: {
+			title: {
+				display: true,
+				fontStyle: 'bold',
+				text: "Watts per day"
+			},
+			legend: {
+				position: "bottom",
+				labels: {}
+			},
+			tooltips: {
+				mode: 'label',
+				bodySpacing: 10,
+				cornerRadius: 0,
+				titleMarginBottom: 15,
+			},
+			scales: {
+				xAxes: [{
+					stacked: true,
+					ticks: {
+						autoSkip: false,
+						maxRotation: 80,
+						minRotation: 80
+					}
+				}],
+				yAxes: [{
+					stacked: true,
+					ticks: {
+						beginAtZero: true,
+						stepSize: 10000,
+						userCallback: function(value, index, values) {
+							value = value.toString();
+							value = value.split();
+							value = value.join('.');
+							return 'Watt ' + value;
+						}
+					}
+				}]
+			},
+			responsive: true,
+		}
+	})
+</script>
+
+{% include 'overall_footer.html' %}
+{% endif %}

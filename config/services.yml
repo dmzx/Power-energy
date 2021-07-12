@@ -7,6 +7,7 @@ services:
             - '@template'
             - '@language'
             - '@auth'
+            - '@request'
             - '@dmzx.powerenergy.functions'
     dmzx.powerenergy.listener:
         class: dmzx\powerenergy\event\main_listener

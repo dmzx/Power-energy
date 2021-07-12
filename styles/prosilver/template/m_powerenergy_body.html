@@ -1,0 +1,226 @@
+{% if POWERENERGY_ALLOW_USE %}
+{% include 'overall_header.html' %}
+
+{% INCLUDECSS '@dmzx_powerenergy/powerenergy.css' %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+
+<div id="tabs" class="tabs">
+	<ul>
+		<li class="tab" id="tab_h"><a href="#" onclick="window.open('{U_H_MODE}', '_self'); return false;"><div style="border: none;">{{ lang('POWERENERGY_HOURS') }}</div></a></li>
+		<li class="tab" id="tab_d"><a href="#" onclick="window.open('{U_D_MODE}', '_self'); return false;"><div style="border: none;">{{ lang('POWERENERGY_DAYS') }}</div></a></li>
+		<li class="tab activetab" id="tab_m"><a href="#" onclick="window.open('{U_M_MODE}', '_self'); return false;"><div style="border: none;">{{ lang('POWERENERGY_MONTHS') }}</div></a></li>
+	</ul>
+</div>
+<div class="panel bg1">
+	<div class="container">
+		<canvas id="Months_Chart"></canvas>
+	</div>
+</div>
+
+<script>
+	var powerenergymonths = {
+
+		{% for powerenergy_months in loops.powerenergy_months %}
+			// MONTHS
+			// Power returned
+			months: {{ powerenergy_months.POWERENERGY_MONTH_PWR }},
+			months1: {{ powerenergy_months.POWERENERGY_MONTH1_PWR }},
+			months2: {{ powerenergy_months.POWERENERGY_MONTH2_PWR }},
+			months3: {{ powerenergy_months.POWERENERGY_MONTH3_PWR }},
+			months4: {{ powerenergy_months.POWERENERGY_MONTH4_PWR }},
+			months5: {{ powerenergy_months.POWERENERGY_MONTH5_PWR }},
+			months6: {{ powerenergy_months.POWERENERGY_MONTH6_PWR }},
+			months7: {{ powerenergy_months.POWERENERGY_MONTH7_PWR }},
+			months8: {{ powerenergy_months.POWERENERGY_MONTH8_PWR }},
+			months9: {{ powerenergy_months.POWERENERGY_MONTH9_PWR }},
+			months10: {{ powerenergy_months.POWERENERGY_MONTH10_PWR }},
+			months11: {{ powerenergy_months.POWERENERGY_MONTH11_PWR }},
+
+			months12: {{ powerenergy_months.POWERENERGY_MONTH12_PWR }},
+			months13: {{ powerenergy_months.POWERENERGY_MONTH13_PWR }},
+			// Power Used
+			months_pwu: {{ powerenergy_months.POWERENERGY_MONTH_PWU }},
+			months1_pwu: {{ powerenergy_months.POWERENERGY_MONTH1_PWU }},
+			months2_pwu: {{ powerenergy_months.POWERENERGY_MONTH2_PWU }},
+			months3_pwu: {{ powerenergy_months.POWERENERGY_MONTH3_PWU }},
+			months4_pwu: {{ powerenergy_months.POWERENERGY_MONTH4_PWU }},
+			months5_pwu: {{ powerenergy_months.POWERENERGY_MONTH5_PWU }},
+			months6_pwu: {{ powerenergy_months.POWERENERGY_MONTH6_PWU }},
+			months7_pwu: {{ powerenergy_months.POWERENERGY_MONTH7_PWU }},
+			months8_pwu: {{ powerenergy_months.POWERENERGY_MONTH8_PWU }},
+			months9_pwu: {{ powerenergy_months.POWERENERGY_MONTH9_PWU }},
+			months10_pwu: {{ powerenergy_months.POWERENERGY_MONTH10_PWU }},
+			months11_pwu: {{ powerenergy_months.POWERENERGY_MONTH11_PWU }},
+
+			months12_pwu: {{ powerenergy_months.POWERENERGY_MONTH12_PWU }},
+			months13_pwu: {{ powerenergy_months.POWERENERGY_MONTH13_PWU }},
+			// Date of months
+			months_date: {{ powerenergy_months.POWERENERGY_MONTH_DATE }},
+			months1_date: {{ powerenergy_months.POWERENERGY_MONTH1_DATE }},
+			months2_date: {{ powerenergy_months.POWERENERGY_MONTH2_DATE }},
+			months3_date: {{ powerenergy_months.POWERENERGY_MONTH3_DATE }},
+			months4_date: {{ powerenergy_months.POWERENERGY_MONTH4_DATE }},
+			months5_date: {{ powerenergy_months.POWERENERGY_MONTH5_DATE }},
+			months6_date: {{ powerenergy_months.POWERENERGY_MONTH6_DATE }},
+			months7_date: {{ powerenergy_months.POWERENERGY_MONTH7_DATE }},
+			months8_date: {{ powerenergy_months.POWERENERGY_MONTH8_DATE }},
+			months9_date: {{ powerenergy_months.POWERENERGY_MONTH9_DATE }},
+			months10_date: {{ powerenergy_months.POWERENERGY_MONTH10_DATE }},
+			months11_date: {{ powerenergy_months.POWERENERGY_MONTH11_DATE }},
+
+			months12_date: {{ powerenergy_months.POWERENERGY_MONTH12_DATE }},
+			months13_date: {{ powerenergy_months.POWERENERGY_MONTH13_DATE }},
+			// End Months
+		{% endfor %}
+	}
+
+	function formatDate(type, dateIn)
+	{
+		let dateOut = "";
+
+		if (type == "Hours")
+		{
+			dateOut = " "+dateIn.substring(4,6)+"-"+dateIn.substring(2,4)+"	"+dateIn.substring(6,8)+":00";
+		}
+		else if (type == "Days")
+			dateOut = recidToWeekday(dateIn)+" "+dateIn.substring(4,6)+"-"+dateIn.substring(2,4)+"-20"+dateIn.substring(0,2);
+		else if (type == "Months")
+			dateOut = "20"+dateIn.substring(0,2)+"-"+dateIn.substring(2,4);
+		else
+			dateOut = "20"+dateIn.substring(0,2)+"-"+dateIn.substring(2,4)+"-"+dateIn.substring(4,6)+":"+dateIn.substring(6,8);
+		return dateOut;
+	}
+
+	function recidToWeekday(dateIn)
+	{
+		var YY = "20"+dateIn.substring(0,2);
+
+		//-------------------YY-------------------(MM-1)----------------------DD---------------------HH--MM--SS
+		var dt = new Date(Date.UTC(YY, (dateIn.substring(2,4)-1), dateIn.substring(4,6), 1, 1, 1));
+
+		return dt.toLocaleDateString('nl-NL', {weekday: 'long'});
+
+	}
+</script>
+
+<script>
+	let myChart_months = document.getElementById("Months_Chart").getContext('2d');
+	var type = "Months";
+
+	var barChartData_months = {
+		labels: [
+			formatDate(type, powerenergymonths.months_date.toString()),
+			formatDate(type, powerenergymonths.months1_date.toString()),
+			formatDate(type, powerenergymonths.months2_date.toString()),
+			formatDate(type, powerenergymonths.months3_date.toString()),
+			formatDate(type, powerenergymonths.months4_date.toString()),
+			formatDate(type, powerenergymonths.months5_date.toString()),
+			formatDate(type, powerenergymonths.months6_date.toString()),
+			formatDate(type, powerenergymonths.months7_date.toString()),
+			formatDate(type, powerenergymonths.months8_date.toString()),
+			formatDate(type, powerenergymonths.months9_date.toString()),
+			formatDate(type, powerenergymonths.months10_date.toString()),
+			formatDate(type, powerenergymonths.months11_date.toString()),
+			formatDate(type, powerenergymonths.months12_date.toString()),
+			formatDate(type, powerenergymonths.months13_date.toString()),
+		],
+		datasets: [{
+			label: 'KW used',
+			backgroundColor: 'rgba(255, 99, 132, 0.3)',
+			borderColor: 'rgb(255, 99, 132)',
+			borderWidth: 1,
+			data: [
+				powerenergymonths.months_pwu,
+				powerenergymonths.months1_pwu,
+				powerenergymonths.months2_pwu,
+				powerenergymonths.months3_pwu,
+				powerenergymonths.months4_pwu,
+				powerenergymonths.months5_pwu,
+				powerenergymonths.months6_pwu,
+				powerenergymonths.months7_pwu,
+				powerenergymonths.months8_pwu,
+				powerenergymonths.months9_pwu,
+				powerenergymonths.months10_pwu,
+				powerenergymonths.months11_pwu,
+				powerenergymonths.months12_pwu,
+				powerenergymonths.months13_pwu
+			]
+		},
+		{
+			label: 'KW return',
+			backgroundColor: 'rgba(75, 192, 192, 0.3)',
+			borderColor: 'rgb(75, 192, 192)',
+			borderWidth: 1,
+			data: [
+				- powerenergymonths.months,
+				- powerenergymonths.months1,
+				- powerenergymonths.months2,
+				- powerenergymonths.months3,
+				- powerenergymonths.months4,
+				- powerenergymonths.months5,
+				- powerenergymonths.months6,
+				- powerenergymonths.months7,
+				- powerenergymonths.months8,
+				- powerenergymonths.months9,
+				- powerenergymonths.months10,
+				- powerenergymonths.months11,
+				- powerenergymonths.months12,
+				- powerenergymonths.months13
+			]
+		}]
+	};
+
+	Chart.defaults.global.defaultFontFamily =	'verdana';
+	Chart.defaults.global.defaultFontSize =	12;
+	Chart.defaults.global.defaultFontColor =	'#777';
+
+	let populationChart_months = new Chart(myChart_months, {
+		type: 'bar',
+		data: barChartData_months,
+		options: {
+			title: {
+				display: true,
+				fontStyle: 'bold',
+				text: "KW per month"
+			},
+			legend: {
+				position: "bottom",
+				labels: {}
+			},
+			tooltips: {
+				mode: 'label',
+				bodySpacing: 10,
+				cornerRadius: 0,
+				titleMarginBottom: 15,
+			},
+			scales: {
+				xAxes: [{
+				stacked: true,
+					ticks: {
+						autoSkip: false,
+						maxRotation: 80,
+						minRotation: 80
+					}
+				}],
+				yAxes: [{
+					stacked: true,
+					ticks: {
+						beginAtZero: true,
+						stepSize: 10000,
+						userCallback: function(value, index, values) {
+							value = value.toString();
+							value = value.split();
+							value = value.join('.');
+							return 'KW ' + value;
+						}
+					}
+				}]
+			},
+			responsive: true,
+		}
+	})
+</script>
+
+{% include 'overall_footer.html' %}
+{% endif %}
