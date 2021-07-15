@@ -1,6 +1,6 @@
 # Power energy Extension
 
-[![Build Status](https://travis-ci.com/dmzx/Power-energy.svg?branch=main)](https://travis-ci.com/dmzx/Power-energy)
+[![Build Status](https://github.com/dmzx/Power-energy/workflows/Tests/badge.svg)](https://github.com/phpbb-extensions/dmzx/Power-energy)
 
 ## Install
 1. Download the latest release.
